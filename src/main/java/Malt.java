@@ -1,6 +1,11 @@
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Malt {
+
+    private static final List<String> tasks = new ArrayList<>();
+
     private static void displayLogo() {
         String logo = """
                           _____                    _____                    _____        _____         \s
@@ -82,6 +87,33 @@ public class Malt {
     }
 
     /**
+     * Prints a list of all tasks the user has added so far.
+     */
+    private static void listTasks() {
+        System.out.println("____________________________________________________________");
+        if (tasks.isEmpty()) {
+            System.out.println(" You haven't added any tasks yet!");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+        }
+        System.out.println("____________________________________________________________");
+    }
+
+    /**
+     * Adds a task (the user's input) to the list of tasks and prints a confirmation message.
+     *
+     * @param task The user's input string to be added as a task.
+     */
+    private static void addTask(String task) {
+        tasks.add(task);
+        System.out.println("____________________________________________________________");
+        System.out.println(" added: " + task);
+        System.out.println("____________________________________________________________");
+    }
+
+    /**
      * The main entry point for the Malt program.
      * This method initializes the program, displays a logo and greetings, processes user input
      * through an interactive loop, and exits when the user types a termination command.
@@ -98,8 +130,11 @@ public class Malt {
             if (isExitCommand(input)) {
                 goodbyeMessage();
                 break;
-            } else {
-                echoInput(input);
+            } else if (input.equalsIgnoreCase("list")) {
+                listTasks();
+            }
+            else{
+                addTask(input);
             }
         }
     }
