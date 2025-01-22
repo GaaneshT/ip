@@ -101,14 +101,15 @@ public class Malt {
         System.out.println("____________________________________________________________");
     }
 
+
     /**
      * Handles a single user command by parsing and executing it.
      *
      * <p>If the command is "bye", this method will print a goodbye message and return {@code true},
      * signaling the caller (usually {@code main()}) to exit. Otherwise, it delegates to the
-     * appropriate methods based on the command (e.g., "list", "mark", "unmark").</p>
+     * appropriate methods based on the command (e.g., "list", "mark", "unmark", "todo")
      *
-     * @param input The raw user input string, e.g., "mark 2" or "read book".
+     * @param input The raw user input string, e.g., "mark 2" or "todo borrow book".
      * @return {@code true} if the command signals the program should exit, or {@code false} otherwise.
      */
     private static boolean handleCommand(String input) {
@@ -117,8 +118,9 @@ public class Malt {
             return true; // signals main() to exit the loop
         }
 
+        // split into 2 parts: the first word is the command, the rest is the argument
         String[] parts = input.split(" ", 2);
-        String command = parts[0].toLowerCase();
+        String command = parts[0].toLowerCase();  // e.g. "todo", "deadline", "event", etc.
         String rest = (parts.length > 1) ? parts[1] : "";
 
         switch (command) {
@@ -131,13 +133,131 @@ public class Malt {
             case "unmark":
                 unmarkTask(rest);
                 break;
+            case "todo":
+                handleTodo(rest);
+                break;
+            case "deadline":
+                handleDeadline(rest);
+                break;
+            case "event":
+                handleEvent(rest);
+                break;
             default:
-                addTask(input);
+                // If no recognized command, you can decide:
+                // 1) treat it as a normal text -> add a plain Task, or
+                // 2) print an error message
+                // We'll show an error message here:
+                System.out.println("____________________________________________________________");
+                System.out.println(" I'm sorry, but I don't know what that means!");
+                System.out.println("____________________________________________________________");
                 break;
         }
-
         return false;
     }
+
+    /**
+     * Handles creation of a Todo task.
+     *
+     * @param description The full string after the "todo" command.
+     */
+    private static void handleTodo(String description) {
+        if (description.trim().isEmpty()) {
+            System.out.println("____________________________________________________________");
+            System.out.println(" OOPS!!! The description of a todo cannot be empty.");
+            System.out.println("____________________________________________________________");
+            return;
+        }
+        Todo todo = new Todo(description.trim());
+        tasks.add(todo);
+        printAddedTaskMessage(todo);
+    }
+
+    /**
+     * Handles creation of a Deadline task, e.g. "deadline return book /by Sunday".
+     *
+     * @param input The string after "deadline", e.g. "return book /by Sunday".
+     */
+    private static void handleDeadline(String input) {
+        // We expect something like: "<desc> /by <time>"
+        String[] parts = input.split("/by", 2);
+        if (parts.length < 2) {
+            System.out.println("____________________________________________________________");
+            System.out.println(" OOPS!!! Please specify the deadline in the format:");
+            System.out.println("   deadline <description> /by <time>");
+            System.out.println("____________________________________________________________");
+            return;
+        }
+        String description = parts[0].trim();
+        String by = parts[1].trim();
+
+        if (description.isEmpty() || by.isEmpty()) {
+            System.out.println("____________________________________________________________");
+            System.out.println(" OOPS!!! Both description and /by part cannot be empty.");
+            System.out.println("____________________________________________________________");
+            return;
+        }
+
+        Deadline deadline = new Deadline(description, by);
+        tasks.add(deadline);
+        printAddedTaskMessage(deadline);
+    }
+
+    /**
+     * Handles creation of an Event task, e.g. "event project meeting /from Mon 2pm /to 4pm".
+     *
+     * @param input The string after "event", e.g. "project meeting /from Mon 2pm /to 4pm".
+     */
+    private static void handleEvent(String input) {
+        // We expect something like "<desc> /from <start> /to <end>"
+        String[] fromSplit = input.split("/from", 2);
+        if (fromSplit.length < 2) {
+            System.out.println("____________________________________________________________");
+            System.out.println(" OOPS!!! Please specify the event in the format:");
+            System.out.println("   event <description> /from <start> /to <end>");
+            System.out.println("____________________________________________________________");
+            return;
+        }
+        String description = fromSplit[0].trim();
+
+        // now split the second part by "/to"
+        String[] toSplit = fromSplit[1].split("/to", 2);
+        if (toSplit.length < 2) {
+            System.out.println("____________________________________________________________");
+            System.out.println(" OOPS!!! An event must have both /from and /to time frames.");
+            System.out.println("____________________________________________________________");
+            return;
+        }
+
+        String fromTime = toSplit[0].trim();
+        String toTime = toSplit[1].trim();
+
+        if (description.isEmpty() || fromTime.isEmpty() || toTime.isEmpty()) {
+            System.out.println("____________________________________________________________");
+            System.out.println(" OOPS!!! Make sure description, /from, and /to parts are not empty.");
+            System.out.println("____________________________________________________________");
+            return;
+        }
+
+        Event event = new Event(description, fromTime, toTime);
+        tasks.add(event);
+        printAddedTaskMessage(event);
+    }
+
+
+    /**
+     * Prints the "Got it. I've added this task" message and shows how many tasks are in the list.
+     *
+     * @param task The newly created Task object.
+     */
+    private static void printAddedTaskMessage(Task task) {
+        System.out.println("____________________________________________________________");
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println("____________________________________________________________");
+    }
+
+
 
     /**
      * Marks the specified task (by its 1-based index in the tasks list) as done.

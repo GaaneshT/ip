@@ -16,13 +16,11 @@ public class Task {
     }
 
     public String getStatusIcon() {
-        // Return "X" if done, or " " otherwise
         return (isDone ? "X" : " ");
     }
 
     @Override
     public String toString() {
-        // Example: [X] read book
         return "[" + getStatusIcon() + "] " + description;
     }
 }
