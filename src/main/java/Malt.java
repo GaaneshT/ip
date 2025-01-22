@@ -118,42 +118,45 @@ public class Malt {
             return true; // signals main() to exit the loop
         }
 
-        // split into 2 parts: the first word is the command, the rest is the argument
-        String[] parts = input.split(" ", 2);
-        String command = parts[0].toLowerCase();  // e.g. "todo", "deadline", "event", etc.
-        String rest = (parts.length > 1) ? parts[1] : "";
+        try {
+            // split into 2 parts: the first word is the command, the rest is the argument
+            String[] parts = input.split(" ", 2);
+            String command = parts[0].toLowerCase();  // e.g. "todo", "deadline", "event", etc.
+            String rest = (parts.length > 1) ? parts[1] : "";
 
-        switch (command) {
-            case "list":
-                listTasks();
-                break;
-            case "mark":
-                markTask(rest);
-                break;
-            case "unmark":
-                unmarkTask(rest);
-                break;
-            case "todo":
-                handleTodo(rest);
-                break;
-            case "deadline":
-                handleDeadline(rest);
-                break;
-            case "event":
-                handleEvent(rest);
-                break;
-            default:
-                // If no recognized command, you can decide:
-                // 1) treat it as a normal text -> add a plain Task, or
-                // 2) print an error message
-                // We'll show an error message here:
-                System.out.println("____________________________________________________________");
-                System.out.println(" I'm sorry, but I don't know what that means!");
-                System.out.println("____________________________________________________________");
-                break;
+            switch (command) {
+                case "list":
+                    listTasks();
+                    break;
+                case "mark":
+                    markTask(rest);
+                    break;
+                case "unmark":
+                    unmarkTask(rest);
+                    break;
+                case "todo":
+                    handleTodo(rest);
+                    break;
+                case "deadline":
+                    handleDeadline(rest);
+                    break;
+                case "event":
+                    handleEvent(rest);
+                    break;
+                default:
+                    // For unrecognized commands, throw a custom exception
+                    throw new MaltException(" I'm sorry, but I don't know what that means!");
+            }
+        } catch (MaltException e) {
+            // Catches any MaltException thrown by the methods called above
+            System.out.println("____________________________________________________________");
+            System.out.println(e.getMessage());
+            System.out.println("____________________________________________________________");
         }
+
         return false;
     }
+
 
     /**
      * Handles creation of a Todo task.
@@ -329,7 +332,7 @@ public class Malt {
      */
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        displayLogo();
+//        displayLogo();
         greetings();
 
         while (true) {
