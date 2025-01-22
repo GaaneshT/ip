@@ -11,4 +11,5 @@ deadline finish assignment /by next Monday
 mark 4
 list
 blah
+delete 2
 bye

@@ -134,6 +134,9 @@ public class Malt {
                 case "unmark":
                     unmarkTask(rest);
                     break;
+                case "delete":
+                    deleteTask(rest);
+                    break;
                 case "todo":
                     handleTodo(rest);
                     break;
@@ -163,41 +166,34 @@ public class Malt {
      *
      * @param description The full string after the "todo" command.
      */
-    private static void handleTodo(String description) {
+    private static void handleTodo(String description) throws MaltException {
         if (description.trim().isEmpty()) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" OOPS!!! The description of a todo cannot be empty.");
-            System.out.println("____________________________________________________________");
-            return;
+            throw new MaltException(" OOPS!!! The description of a todo cannot be empty.");
         }
         Todo todo = new Todo(description.trim());
         tasks.add(todo);
         printAddedTaskMessage(todo);
     }
 
+
     /**
      * Handles creation of a Deadline task, e.g. "deadline return book /by Sunday".
      *
      * @param input The string after "deadline", e.g. "return book /by Sunday".
      */
-    private static void handleDeadline(String input) {
-        // We expect something like: "<desc> /by <time>"
+    private static void handleDeadline(String input) throws MaltException {
         String[] parts = input.split("/by", 2);
         if (parts.length < 2) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" OOPS!!! Please specify the deadline in the format:");
-            System.out.println("   deadline <description> /by <time>");
-            System.out.println("____________________________________________________________");
-            return;
+            throw new MaltException("""
+            OOPS!!! Please specify the deadline in the format:
+               deadline <description> /by <time>
+            """);
         }
         String description = parts[0].trim();
         String by = parts[1].trim();
 
         if (description.isEmpty() || by.isEmpty()) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" OOPS!!! Both description and /by part cannot be empty.");
-            System.out.println("____________________________________________________________");
-            return;
+            throw new MaltException(" OOPS!!! Both description and /by part cannot be empty.");
         }
 
         Deadline deadline = new Deadline(description, by);
@@ -205,46 +201,62 @@ public class Malt {
         printAddedTaskMessage(deadline);
     }
 
+
     /**
      * Handles creation of an Event task, e.g. "event project meeting /from Mon 2pm /to 4pm".
      *
      * @param input The string after "event", e.g. "project meeting /from Mon 2pm /to 4pm".
      */
-    private static void handleEvent(String input) {
-        // We expect something like "<desc> /from <start> /to <end>"
+    private static void handleEvent(String input) throws MaltException {
         String[] fromSplit = input.split("/from", 2);
         if (fromSplit.length < 2) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" OOPS!!! Please specify the event in the format:");
-            System.out.println("   event <description> /from <start> /to <end>");
-            System.out.println("____________________________________________________________");
-            return;
+            throw new MaltException("""
+            OOPS!!! Please specify the event in the format:
+               event <description> /from <start> /to <end>
+            """);
         }
         String description = fromSplit[0].trim();
 
-        // now split the second part by "/to"
         String[] toSplit = fromSplit[1].split("/to", 2);
         if (toSplit.length < 2) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" OOPS!!! An event must have both /from and /to time frames.");
-            System.out.println("____________________________________________________________");
-            return;
+            throw new MaltException(" OOPS!!! An event must have both /from and /to time frames.");
         }
-
         String fromTime = toSplit[0].trim();
         String toTime = toSplit[1].trim();
-
         if (description.isEmpty() || fromTime.isEmpty() || toTime.isEmpty()) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" OOPS!!! Make sure description, /from, and /to parts are not empty.");
-            System.out.println("____________________________________________________________");
-            return;
+            throw new MaltException(" OOPS!!! Make sure description, /from, and /to parts are not empty.");
         }
-
         Event event = new Event(description, fromTime, toTime);
         tasks.add(event);
         printAddedTaskMessage(event);
     }
+
+    /**
+     * Deletes the specified task (by its 1-based index) from the tasks list.
+     *
+     * <p>If the index is invalid (out of range or non-numeric), throws a MaltException.</p>
+     *
+     * @param indexString A string representing the 1-based task index to be deleted.
+     *                    For example, "3" means the third task in the list.
+     * @throws MaltException if the index is not a valid integer or is out of bounds.
+     */
+    private static void deleteTask(String indexString) throws MaltException {
+        try {
+            int index = Integer.parseInt(indexString) - 1; // Convert 1-based to 0-based
+            Task removed = tasks.remove(index);            // remove returns the removed element
+
+            System.out.println("____________________________________________________________");
+            System.out.println(" Noted. I've removed this task:");
+            System.out.println("   " + removed);
+            System.out.println(" Now you have " + tasks.size() + " tasks in the list. Get working :(");
+            System.out.println("____________________________________________________________");
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            // If indexString is not an integer or index is out-of-range, throw a MaltException
+            throw new MaltException(" Invalid index for delete command!");
+        }
+    }
+
+
 
 
     /**
@@ -254,9 +266,9 @@ public class Malt {
      */
     private static void printAddedTaskMessage(Task task) {
         System.out.println("____________________________________________________________");
-        System.out.println(" Got it. I've added this task:");
+        System.out.println(" Adding this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list! Get working :(");
         System.out.println("____________________________________________________________");
     }
 
@@ -270,19 +282,17 @@ public class Malt {
      * @param indexString A string representing the 1-based task index to be marked as done.
      *                    For example, "2" means the second task in the list.
      */
-    private static void markTask(String indexString) {
+    private static void markTask(String indexString) throws MaltException {
         try {
             int index = Integer.parseInt(indexString) - 1;
             Task task = tasks.get(index);
             task.markAsDone();
             System.out.println("____________________________________________________________");
-            System.out.println(" Nice! I've marked this task as done:");
+            System.out.println(" Perfect,marking this task as done now:");
             System.out.println("   " + task);
             System.out.println("____________________________________________________________");
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" Invalid index for mark command!");
-            System.out.println("____________________________________________________________");
+            throw new MaltException(" Invalid index for mark command!");
         }
     }
 
@@ -294,19 +304,17 @@ public class Malt {
      * @param indexString A string representing the 1-based task index to be marked as not done.
      *                    For example, "2" means the second task in the list.
      */
-    private static void unmarkTask(String indexString) {
+    private static void unmarkTask(String indexString) throws MaltException {
         try {
             int index = Integer.parseInt(indexString) - 1;
             Task task = tasks.get(index);
             task.markAsNotDone();
             System.out.println("____________________________________________________________");
-            System.out.println(" OK, I've marked this task as not done yet:");
+            System.out.println(" OK, I've unmarked this task:");
             System.out.println("   " + task);
             System.out.println("____________________________________________________________");
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            System.out.println("____________________________________________________________");
-            System.out.println(" Invalid index for unmark command!");
-            System.out.println("____________________________________________________________");
+            throw new MaltException(" Invalid index for unmark command!");
         }
     }
 
