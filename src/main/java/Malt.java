@@ -5,7 +5,9 @@ import java.util.List;
 public class Malt {
 
     private static final List<Task> tasks = new ArrayList<>();
-
+    private static void printLineBreak() {
+        System.out.println("____________________________________________________________");
+    }
     private static void displayLogo() {
         String logo = """
                           _____                    _____                    _____        _____         \s
@@ -39,10 +41,10 @@ public class Malt {
      * Prints the greeting message to the user.
      */
     private static void greetings() {
-        System.out.println("____________________________________________________________");
+        printLineBreak();
         System.out.println(" Hey! I'm Malt, like the chocolate Maltesers hehe");
         System.out.println(" What can I help you with?");
-        System.out.println("____________________________________________________________");
+        printLineBreak();
     }
 
     /**
@@ -70,9 +72,9 @@ public class Malt {
      * The message is framed with decorative lines for visual clarity.
      */
     private static void goodbyeMessage() {
-        System.out.println("____________________________________________________________");
+        printLineBreak();
         System.out.println(" Bye. Hope to see you again soon!");
-        System.out.println("____________________________________________________________");
+        printLineBreak();
     }
 
     /**
@@ -81,16 +83,16 @@ public class Malt {
      * @param input The user input to echo.
      */
     private static void echoInput(String input) {
-        System.out.println("____________________________________________________________");
+        printLineBreak();
         System.out.println(" " + input);
-        System.out.println("____________________________________________________________");
+        printLineBreak();
     }
 
     /**
      * Prints a list of all tasks the user has added so far.
      */
     private static void listTasks() {
-        System.out.println("____________________________________________________________");
+        printLineBreak();
         if (tasks.isEmpty()) {
             System.out.println(" You haven't added any tasks yet!");
         } else {
@@ -98,7 +100,7 @@ public class Malt {
                 System.out.println((i + 1) + ". " + tasks.get(i));
             }
         }
-        System.out.println("____________________________________________________________");
+        printLineBreak();
     }
 
 
@@ -152,9 +154,9 @@ public class Malt {
             }
         } catch (MaltException e) {
             // Catches any MaltException thrown by the methods called above
-            System.out.println("____________________________________________________________");
+            printLineBreak();
             System.out.println(e.getMessage());
-            System.out.println("____________________________________________________________");
+            printLineBreak();
         }
 
         return false;
@@ -245,11 +247,11 @@ public class Malt {
             int index = Integer.parseInt(indexString) - 1; // Convert 1-based to 0-based
             Task removed = tasks.remove(index);            // remove returns the removed element
 
-            System.out.println("____________________________________________________________");
+            printLineBreak();
             System.out.println(" Noted. I've removed this task:");
             System.out.println("   " + removed);
             System.out.println(" Now you have " + tasks.size() + " tasks in the list. Get working :(");
-            System.out.println("____________________________________________________________");
+            printLineBreak();
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             // If indexString is not an integer or index is out-of-range, throw a MaltException
             throw new MaltException(" Invalid index for delete command!");
@@ -265,11 +267,11 @@ public class Malt {
      * @param task The newly created Task object.
      */
     private static void printAddedTaskMessage(Task task) {
-        System.out.println("____________________________________________________________");
+        printLineBreak();
         System.out.println(" Adding this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list! Get working :(");
-        System.out.println("____________________________________________________________");
+        printLineBreak();
     }
 
 
@@ -287,10 +289,10 @@ public class Malt {
             int index = Integer.parseInt(indexString) - 1;
             Task task = tasks.get(index);
             task.markAsDone();
-            System.out.println("____________________________________________________________");
+            printLineBreak();
             System.out.println(" Perfect,marking this task as done now:");
             System.out.println("   " + task);
-            System.out.println("____________________________________________________________");
+            printLineBreak();
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             throw new MaltException(" Invalid index for mark command!");
         }
@@ -309,10 +311,10 @@ public class Malt {
             int index = Integer.parseInt(indexString) - 1;
             Task task = tasks.get(index);
             task.markAsNotDone();
-            System.out.println("____________________________________________________________");
+            printLineBreak();
             System.out.println(" OK, I've unmarked this task:");
             System.out.println("   " + task);
-            System.out.println("____________________________________________________________");
+            printLineBreak();
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             throw new MaltException(" Invalid index for unmark command!");
         }
@@ -326,9 +328,9 @@ public class Malt {
     private static void addTask(String task) {
         Task newTask = new Task(task);
         tasks.add(newTask);
-        System.out.println("____________________________________________________________");
+        printLineBreak();
         System.out.println(" added: " + task);
-        System.out.println("____________________________________________________________");
+        printLineBreak();
     }
 
     /**
@@ -345,9 +347,7 @@ public class Malt {
 
         while (true) {
             String input = getUserInput(in);
-            // Pass the input to your handleCommand function
             boolean shouldExit = handleCommand(input);
-
             if (shouldExit) {
                 break;
             }
