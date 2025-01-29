@@ -1,10 +1,12 @@
+import java.io.File;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Malt {
-
-    private static final List<Task> tasks = new ArrayList<>();
+    private static final String DATA_FILE_PATH = "data/malt.txt";
+    private static List<Task> tasks = new ArrayList<>();
+    private static final Storage storage = new Storage(DATA_FILE_PATH);
     private static void printLineBreak() {
         System.out.println("____________________________________________________________");
     }
@@ -174,6 +176,7 @@ public class Malt {
         }
         Todo todo = new Todo(description.trim());
         tasks.add(todo);
+        storage.saveTasks(tasks);
         printAddedTaskMessage(todo);
     }
 
@@ -200,6 +203,7 @@ public class Malt {
 
         Deadline deadline = new Deadline(description, by);
         tasks.add(deadline);
+        storage.saveTasks(tasks);
         printAddedTaskMessage(deadline);
     }
 
@@ -230,6 +234,7 @@ public class Malt {
         }
         Event event = new Event(description, fromTime, toTime);
         tasks.add(event);
+        storage.saveTasks(tasks);
         printAddedTaskMessage(event);
     }
 
@@ -252,6 +257,7 @@ public class Malt {
             System.out.println("   " + removed);
             System.out.println(" Now you have " + tasks.size() + " tasks in the list. Get working :(");
             printLineBreak();
+            storage.saveTasks(tasks);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             // If indexString is not an integer or index is out-of-range, throw a MaltException
             throw new MaltException(" Invalid index for delete command!");
@@ -293,9 +299,15 @@ public class Malt {
             System.out.println(" Perfect,marking this task as done now:");
             System.out.println("   " + task);
             printLineBreak();
+            storage.saveTasks(tasks);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             throw new MaltException(" Invalid index for mark command!");
         }
+    }
+
+    private static void ensureDataDirectoryExists() {
+        File file = new File(DATA_FILE_PATH);
+        file.getParentFile().mkdirs(); // creates the data folder if not existing
     }
 
     /**
@@ -315,23 +327,25 @@ public class Malt {
             System.out.println(" OK, I've unmarked this task:");
             System.out.println("   " + task);
             printLineBreak();
+            storage.saveTasks(tasks);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             throw new MaltException(" Invalid index for unmark command!");
         }
     }
 
-    /**
-     * Adds a task (the user's input) to the list of tasks and prints a confirmation message.
-     *
-     * @param task The user's input string to be added as a task.
-     */
-    private static void addTask(String task) {
-        Task newTask = new Task(task);
-        tasks.add(newTask);
-        printLineBreak();
-        System.out.println(" added: " + task);
-        printLineBreak();
-    }
+//    /**
+//     * Adds a task (the user's input) to the list of tasks and prints a confirmation message.
+//     *
+//     * @param task The user's input string to be added as a task.
+//     */
+//    private static void addTask(String task) {
+//        Task newTask = new Task(task);
+//        tasks.add(newTask);
+//        storage.saveTasks(tasks);
+//        printLineBreak();
+//        System.out.println(" added: " + task);
+//        printLineBreak();
+//    }
 
     /**
      * The main entry point for the Malt program.
@@ -341,7 +355,10 @@ public class Malt {
      * @param args Command-line arguments. This program does not utilize any command-line arguments.
      */
     public static void main(String[] args) {
+        ensureDataDirectoryExists();
+        tasks = storage.loadTasks();
         Scanner in = new Scanner(System.in);
+
 //        displayLogo();
         greetings();
 
