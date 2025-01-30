@@ -10,7 +10,6 @@ public class Todo extends Task {
 
     @Override
     public String toFileFormat() {
-        // T | <isDone> | <description>
         return String.format("T | %d | %s",
                 (isDone ? 1 : 0),
                 description);

@@ -190,22 +190,24 @@ public class Malt {
         String[] parts = input.split("/by", 2);
         if (parts.length < 2) {
             throw new MaltException("""
-            OOPS!!! Please specify the deadline in the format:
-               deadline <description> /by <time>
-            """);
+        OOPS!!! Please specify the deadline in the format:
+           deadline <description> /by <yyyy-MM-dd>
+        """);
         }
         String description = parts[0].trim();
-        String by = parts[1].trim();
+        String byInput = parts[1].trim();
 
-        if (description.isEmpty() || by.isEmpty()) {
+        if (description.isEmpty() || byInput.isEmpty()) {
             throw new MaltException(" OOPS!!! Both description and /by part cannot be empty.");
         }
 
-        Deadline deadline = new Deadline(description, by);
+        // Pass the byInput to the new Deadline constructor
+        Deadline deadline = new Deadline(description, byInput);
         tasks.add(deadline);
         storage.saveTasks(tasks);
         printAddedTaskMessage(deadline);
     }
+
 
 
     /**
