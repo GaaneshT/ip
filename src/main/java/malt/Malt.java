@@ -1,4 +1,14 @@
+package malt;
+
 import java.io.File;
+
+
+import malt.ui.Ui;
+import malt.storage.Storage;
+import malt.task.TaskList;
+import malt.parser.Parser;
+import malt.MaltException;
+
 
 public class Malt {
     private static final String DATA_FILE_PATH = "data/malt.txt";

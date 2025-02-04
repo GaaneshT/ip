@@ -1,4 +1,8 @@
+package malt.ui;
 import java.util.Scanner;
+import malt.MaltException;
+
+
 
 public class Ui {
     private static final String DIVIDER = "____________________________________________________________";

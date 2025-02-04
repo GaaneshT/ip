@@ -1,5 +1,8 @@
+package malt.task;
+
 import java.util.ArrayList;
 import java.util.List;
+import malt.MaltException;
 
 public class TaskList {
     private final List<Task> tasks;

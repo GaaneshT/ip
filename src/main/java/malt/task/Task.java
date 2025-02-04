@@ -1,3 +1,6 @@
+package malt.task;
+import malt.MaltException;
+
 public abstract class Task {
     protected String description;
     protected boolean isDone;

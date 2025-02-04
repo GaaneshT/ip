@@ -1,4 +1,14 @@
+package malt.parser;
 import java.util.List;
+import malt.task.Task;
+import malt.task.Todo;
+import malt.task.Deadline;
+import malt.task.Event;
+import malt.task.TaskList;
+import malt.ui.Ui;
+import malt.storage.Storage;
+import malt.MaltException;
+
 
 public class Parser {
 
