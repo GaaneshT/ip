@@ -1,7 +1,8 @@
 package malt.ui;
-import java.util.Scanner;
-import malt.MaltException;
 
+import java.util.Scanner;
+
+import malt.MaltException;
 
 
 public class Ui {

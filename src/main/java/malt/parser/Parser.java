@@ -1,5 +1,7 @@
 package malt.parser;
+
 import java.util.List;
+
 import malt.task.Task;
 import malt.task.Todo;
 import malt.task.Deadline;
@@ -29,40 +31,43 @@ public class Parser {
         String argument = (parts.length > 1) ? parts[1].trim() : "";
 
         switch (command) {
-            case "bye":
-                // User wants to exit
-                return handleBye(ui);
+        case "bye":
+            // User wants to exit
+            return handleBye(ui);
 
-            case "list":
-                handleList(tasks, ui);
-                return false;
+        case "list":
+            handleList(tasks, ui);
+            return false;
 
-            case "mark":
-                handleMark(argument, tasks, ui, storage);
-                return false;
+        case "mark":
+            handleMark(argument, tasks, ui, storage);
+            return false;
 
-            case "unmark":
-                handleUnmark(argument, tasks, ui, storage);
-                return false;
+        case "unmark":
+            handleUnmark(argument, tasks, ui, storage);
+            return false;
 
-            case "delete":
-                handleDelete(argument, tasks, ui, storage);
-                return false;
+        case "delete":
+            handleDelete(argument, tasks, ui, storage);
+            return false;
 
-            case "todo":
-                handleTodo(argument, tasks, ui, storage);
-                return false;
+        case "todo":
+            handleTodo(argument, tasks, ui, storage);
+            return false;
 
-            case "deadline":
-                handleDeadline(argument, tasks, ui, storage);
-                return false;
+        case "deadline":
+            handleDeadline(argument, tasks, ui, storage);
+            return false;
 
-            case "event":
-                handleEvent(argument, tasks, ui, storage);
-                return false;
+        case "event":
+            handleEvent(argument, tasks, ui, storage);
+            return false;
+        case "find":
+            handleFind(argument, tasks, ui);
+            return false;
 
-            default:
-                throw new MaltException("I'm sorry, but I don't know what that means!");
+        default:
+            throw new MaltException("I'm sorry, but I don't know what that means!");
         }
     }
 
@@ -70,12 +75,24 @@ public class Parser {
     // COMMAND HANDLERS
     // --------------------------------------------------
 
+    /**
+     * Handles the "bye" command by displaying a goodbye message.
+     *
+     * @param ui The UI handler for user interaction.
+     * @return true indicating that the application should exit.
+     */
     private static boolean handleBye(Ui ui) {
         ui.showGoodbye();
         // Returning true signals the main loop to exit
         return true;
     }
 
+    /**
+     * Handles the "list" command by displaying all tasks.
+     *
+     * @param tasks The list of tasks.
+     * @param ui    The UI handler for user interaction.
+     */
     private static void handleList(TaskList tasks, Ui ui) {
         ui.showLine();
         if (tasks.size() == 0) {
@@ -89,6 +106,37 @@ public class Parser {
         ui.showLine();
     }
 
+    /**
+     * Handles the find command to search for tasks containing the keyword.
+     *
+     * @param keyword The keyword to search for.
+     * @param tasks   The TaskList to search.
+     * @param ui      The UI for displaying results.
+     */
+    private static void handleFind(String keyword, TaskList tasks, Ui ui) {
+        ui.showLine();
+        List<Task> matchingTasks = tasks.findTasks(keyword);
+        if (matchingTasks.isEmpty()) {
+            System.out.println("No matching tasks found.");
+        } else {
+            System.out.println("Here are the matching tasks in your list:");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println((i + 1) + ". " + matchingTasks.get(i));
+            }
+        }
+        ui.showLine();
+    }
+
+
+    /**
+     * Handles the "mark" command by marking a task as done.
+     *
+     * @param arg     The index of the task to be marked.
+     * @param tasks   The task list.
+     * @param ui      The UI handler for user interaction.
+     * @param storage The storage handler for saving tasks.
+     * @throws MaltException If the index is invalid.
+     */
     private static void handleMark(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         try {
             int index = Integer.parseInt(arg);
@@ -108,6 +156,15 @@ public class Parser {
         }
     }
 
+    /**
+     * Handles the "unmark" command by marking a task as not done.
+     *
+     * @param arg     The index of the task to be unmarked.
+     * @param tasks   The task list.
+     * @param ui      The UI handler for user interaction.
+     * @param storage The storage handler for saving tasks.
+     * @throws MaltException If the index is invalid.
+     */
     private static void handleUnmark(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         try {
             int index = Integer.parseInt(arg);
@@ -126,6 +183,15 @@ public class Parser {
         }
     }
 
+    /**
+     * Handles the "delete" command by removing a task.
+     *
+     * @param arg     The index of the task to be deleted.
+     * @param tasks   The task list.
+     * @param ui      The UI handler for user interaction.
+     * @param storage The storage handler for saving tasks.
+     * @throws MaltException If the index is invalid.
+     */
     private static void handleDelete(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         try {
             int index = Integer.parseInt(arg);
@@ -143,6 +209,15 @@ public class Parser {
         }
     }
 
+    /**
+     * Handles the "todo" command by adding a new todo task.
+     *
+     * @param arg     The description of the todo task.
+     * @param tasks   The task list.
+     * @param ui      The UI handler for user interaction.
+     * @param storage The storage handler for saving tasks.
+     * @throws MaltException If the description is empty.
+     */
     private static void handleTodo(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         if (arg.isBlank()) {
             throw new MaltException(" OOPS!!! The description of a todo cannot be empty.");
@@ -161,6 +236,7 @@ public class Parser {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list! Get working :(");
         ui.showLine();
     }
+
 
     private static void handleDeadline(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         // E.g.: "return book /by 2023-10-15"
@@ -188,6 +264,7 @@ public class Parser {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list! Get working :(");
         ui.showLine();
     }
+
 
     private static void handleEvent(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         // e.g.: "project meeting /from Monday 2pm /to 4pm"
