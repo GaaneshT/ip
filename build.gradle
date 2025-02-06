@@ -34,6 +34,7 @@ application {
 shadowJar {
     archiveBaseName = "malt"
     archiveClassifier = null
+    archiveFileName = "malt.jar"
 }
 
 run{

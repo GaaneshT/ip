@@ -60,6 +60,9 @@ public class Parser {
             case "event":
                 handleEvent(argument, tasks, ui, storage);
                 return false;
+            case "find":
+                handleFind(argument,tasks,ui);
+                return false;
 
             default:
                 throw new MaltException("I'm sorry, but I don't know what that means!");
@@ -88,6 +91,27 @@ public class Parser {
         }
         ui.showLine();
     }
+
+    /**
+     * Handles the find command to search for tasks containing the keyword.
+     * @param keyword The keyword to search for.
+     * @param tasks The TaskList to search.
+     * @param ui The UI for displaying results.
+     */
+    private static void handleFind(String keyword, TaskList tasks, Ui ui) {
+        ui.showLine();
+        List<Task> matchingTasks = tasks.findTasks(keyword);
+        if (matchingTasks.isEmpty()) {
+            System.out.println("No matching tasks found.");
+        } else {
+            System.out.println("Here are the matching tasks in your list:");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println((i + 1) + ". " + matchingTasks.get(i));
+            }
+        }
+        ui.showLine();
+    }
+
 
     private static void handleMark(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         try {
