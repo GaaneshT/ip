@@ -31,7 +31,6 @@ public class Malt {
     }
 
 
-
     private void ensureDataDirectoryExists(String filePath) {
         File file = new File(filePath);
         file.getParentFile().mkdirs();

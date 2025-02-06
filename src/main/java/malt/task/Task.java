@@ -1,4 +1,5 @@
 package malt.task;
+
 import malt.MaltException;
 
 public abstract class Task {
@@ -41,9 +42,9 @@ public abstract class Task {
     /**
      * Each subclass (Todo, Deadline, Event) must implement this method
      * to produce a string in the correct format, e.g.,
-     *   - T | 1 | read book
-     *   - D | 0 | return book | Sunday
-     *   - E | 1 | project meeting | Monday 2pm | 4pm
+     * - T | 1 | read book
+     * - D | 0 | return book | Sunday
+     * - E | 1 | project meeting | Monday 2pm | 4pm
      */
     public abstract String toFileFormat();
 
@@ -84,43 +85,43 @@ public abstract class Task {
         String description = parts[2];
 
         switch (taskType) {
-            case "T":
-                if (parts.length != 3) {
-                    throw new MaltException("Corrupted Todo line: " + line);
-                }
-                Todo todo = new Todo(description);
-                if (doneStatus == 1) {
-                    todo.markAsDone();
-                }
-                return todo;
+        case "T":
+            if (parts.length != 3) {
+                throw new MaltException("Corrupted Todo line: " + line);
+            }
+            Todo todo = new Todo(description);
+            if (doneStatus == 1) {
+                todo.markAsDone();
+            }
+            return todo;
 
-            case "D":
-                // Format: D | 0/1 | <description> | <by>
-                if (parts.length != 4) {
-                    throw new MaltException("Corrupted Deadline line: " + line);
-                }
-                String by = parts[3];
-                Deadline deadline = new Deadline(description, by);
-                if (doneStatus == 1) {
-                    deadline.markAsDone();
-                }
-                return deadline;
+        case "D":
+            // Format: D | 0/1 | <description> | <by>
+            if (parts.length != 4) {
+                throw new MaltException("Corrupted Deadline line: " + line);
+            }
+            String by = parts[3];
+            Deadline deadline = new Deadline(description, by);
+            if (doneStatus == 1) {
+                deadline.markAsDone();
+            }
+            return deadline;
 
-            case "E":
-                // Format: E | 0/1 | <description> | <from> | <to>
-                if (parts.length != 5) {
-                    throw new MaltException("Corrupted Event line: " + line);
-                }
-                String from = parts[3];
-                String to = parts[4];
-                Event event = new Event(description, from, to);
-                if (doneStatus == 1) {
-                    event.markAsDone();
-                }
-                return event;
+        case "E":
+            // Format: E | 0/1 | <description> | <from> | <to>
+            if (parts.length != 5) {
+                throw new MaltException("Corrupted Event line: " + line);
+            }
+            String from = parts[3];
+            String to = parts[4];
+            Event event = new Event(description, from, to);
+            if (doneStatus == 1) {
+                event.markAsDone();
+            }
+            return event;
 
-            default:
-                throw new MaltException("Unrecognized task type: " + taskType);
+        default:
+            throw new MaltException("Unrecognized task type: " + taskType);
         }
     }
 }

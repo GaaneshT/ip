@@ -2,6 +2,7 @@ package malt.task;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import malt.MaltException;
 
 public class TaskList {
@@ -62,6 +63,7 @@ public class TaskList {
 
     /**
      * Finds tasks that contain the given keyword in their description.
+     *
      * @param keyword The keyword to search for.
      * @return A list of matching tasks.
      */
@@ -74,7 +76,6 @@ public class TaskList {
         }
         return matchingTasks;
     }
-
 
 
     /**
