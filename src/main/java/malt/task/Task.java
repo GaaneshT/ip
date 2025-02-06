@@ -5,19 +5,35 @@ public abstract class Task {
     protected String description;
     protected boolean isDone;
 
+    /**
+     * Constructs a new Task with the given description.
+     *
+     * @param description The description of the task.
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Marks the task as completed.
+     */
     public void markAsDone() {
         this.isDone = true;
     }
 
+    /**
+     * Marks the task as not completed.
+     */
     public void markAsNotDone() {
         this.isDone = false;
     }
 
+    /**
+     * Retrieves the status icon representing the task's completion state.
+     *
+     * @return "X" if the task is completed, otherwise a blank space.
+     */
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
     }

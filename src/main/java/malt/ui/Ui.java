@@ -12,9 +12,7 @@ public class Ui {
         this.scanner = new Scanner(System.in);
     }
 
-    /**
-     * Displays the Malt ASCII art logo.
-     */
+
     private static void displayLogo() {
         String logo = """
                           _____                    _____                    _____        _____         \s
@@ -45,14 +43,15 @@ public class Ui {
     }
 
     /**
-     * Prints a line divider for clarity.
+     * Prints a horizontal line divider for visual clarity.
      */
     public void showLine() {
         System.out.println(DIVIDER);
     }
 
     /**
-     * Prints the welcome message (including the Malt logo).
+     * Displays the welcome message, including the Malt ASCII art logo.
+     * This method is called when the program starts to greet the user.
      */
     public void showWelcome() {
         displayLogo();
@@ -64,13 +63,15 @@ public class Ui {
 
     /**
      * Reads a line of user input from the console.
+     *
+     * @return the user input as a String.
      */
     public String readCommand() {
         return scanner.nextLine();
     }
 
     /**
-     * Prints a farewell message to the user when exiting.
+     * Displays a farewell message to the user upon exiting.
      */
     public void showGoodbye() {
         showLine();
@@ -79,7 +80,9 @@ public class Ui {
     }
 
     /**
-     * Prints any error message (String).
+     * Displays an error message.
+     *
+     * @param message the error message to be displayed.
      */
     public void showError(String message) {
         showLine();
@@ -93,9 +96,10 @@ public class Ui {
     public void showError(MaltException e) {
         showError(e.getMessage());
     }
-
     /**
-     * Shows a generic message (you can expand this to specialized methods if you want).
+     * Displays a general message, surrounded by dividers for readability.
+     *
+     * @param message the message to be displayed.
      */
     public void showMessage(String message) {
         showLine();

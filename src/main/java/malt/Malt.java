@@ -19,6 +19,7 @@ public class Malt {
 
     /**
      * Constructs the Malt chatbot, initializing UI, storage, and tasks.
+     *
      * @param filePath path to the data file storing tasks (e.g., "data/malt.txt")
      */
     public Malt(String filePath) {
@@ -29,9 +30,8 @@ public class Malt {
         tasks = new TaskList(storage.loadTasks());
     }
 
-    /**
-     * Ensures the data directory exists (e.g., the 'data' folder).
-     */
+
+
     private void ensureDataDirectoryExists(String filePath) {
         File file = new File(filePath);
         file.getParentFile().mkdirs();
