@@ -61,6 +61,7 @@ public class Malt {
      * Initializes a Malt instance with the default data file path, then runs it.
      */
     public static void main(String[] args) {
-        new Malt(DATA_FILE_PATH).run();
+//        new Malt(DATA_FILE_PATH).run();
+        Launcher.main(args);
     }
 }
