@@ -6,7 +6,7 @@ import malt.MaltException;
 
 
 public class Ui {
-    private static final String DIVIDER = "____________________________________________________________";
+    private static final String DIVIDER = "____________________________________________";
     private final Scanner scanner;
 
     public Ui() {
