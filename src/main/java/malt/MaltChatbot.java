@@ -2,6 +2,7 @@ package malt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
 import malt.parser.Parser;
 import malt.storage.Storage;
 import malt.task.TaskList;

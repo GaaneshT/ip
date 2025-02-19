@@ -97,6 +97,7 @@ public class Ui {
     public void showError(MaltException e) {
         showError(e.getMessage());
     }
+
     /**
      * Displays a general message, surrounded by dividers for readability.
      *

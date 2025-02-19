@@ -26,17 +26,19 @@ public class MainWindow {
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
-        dialogContainer.getChildren().add(
-                DialogBox.getMaltDialog("Hello! I'm Malt, your chatbot.\nHow can I assist you today?", maltImage)
-        );
+        dialogContainer.getChildren().add(DialogBox.getMaltDialog("Hello! I'm Malt, your chatbot.\nHow can I assist you today?", maltImage));
     }
 
-    /** Injects the chatbot instance */
+    /**
+     * Injects the chatbot instance
+     */
     public void setMaltChatbot(MaltChatbot maltChatbot) {
         this.maltChatbot = maltChatbot;
     }
 
-    /** Handles user input */
+    /**
+     * Handles user input
+     */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText().trim();
@@ -44,10 +46,7 @@ public class MainWindow {
 
         String response = maltChatbot.getResponse(input); // Now uses MaltChatbot for responses
 
-        dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getMaltDialog(response, maltImage)
-        );
+        dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage), DialogBox.getMaltDialog(response, maltImage));
         userInput.clear();
     }
 }

@@ -40,8 +40,7 @@ public class Parser {
      * @return true if the command indicates the app should exit, false otherwise
      * @throws MaltException if there's a problem parsing or executing the command
      */
-    public static boolean parseAndExecute(String input, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    public static boolean parseAndExecute(String input, TaskList tasks, Ui ui, Storage storage) throws MaltException {
 
         assert input != null : "Command input should never be null!";
         assert tasks != null : "TaskList should never be null!";
@@ -161,8 +160,7 @@ public class Parser {
         }
     }
 
-    private static void handleMark(String arg, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    private static void handleMark(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         int index = parseTaskIndex(arg);
         Task task = tasks.getTask(index - 1);
         task.markAsDone();
@@ -170,8 +168,7 @@ public class Parser {
         storage.saveTasks(tasks.getAllTasks());
     }
 
-    private static void handleUnmark(String arg, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    private static void handleUnmark(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         int index = parseTaskIndex(arg);
         Task task = tasks.getTask(index - 1);
         task.markAsNotDone();
@@ -179,8 +176,7 @@ public class Parser {
         storage.saveTasks(tasks.getAllTasks());
     }
 
-    private static void handleDelete(String arg, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    private static void handleDelete(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         int index = parseTaskIndex(arg);
         Task removed = tasks.removeTask(index - 1);
         ui.showLine();
@@ -191,8 +187,7 @@ public class Parser {
         storage.saveTasks(tasks.getAllTasks());
     }
 
-    private static void handleTodo(String arg, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    private static void handleTodo(String arg, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         if (arg.isBlank()) {
             throw new MaltException("OOPS!!! The description of a todo cannot be empty.");
         }
@@ -212,10 +207,9 @@ public class Parser {
      * Flexible parsing for 'deadline' command:
      * Allows /by <date> to appear anywhere in the user input tokens.
      * e.g. "deadline /by 2023-10-15 return book"
-     *      "deadline return book /by 2023-10-15"
+     * "deadline return book /by 2023-10-15"
      */
-    private static void handleDeadlineFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    private static void handleDeadlineFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         String byDate = "";
         StringBuilder descriptionBuilder = new StringBuilder();
 
@@ -250,10 +244,9 @@ public class Parser {
      * Flexible parsing for 'event' command:
      * Allows /from <start> and /to <end> to appear in any order.
      * e.g. "event project meeting /from Monday 2pm /to 4pm"
-     *      "event /from Monday 2pm /to 4pm project meeting"
+     * "event /from Monday 2pm /to 4pm project meeting"
      */
-    private static void handleEventFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage)
-            throws MaltException {
+    private static void handleEventFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         String fromTime = "";
         String toTime = "";
         StringBuilder descriptionBuilder = new StringBuilder();

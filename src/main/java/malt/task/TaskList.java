@@ -101,6 +101,10 @@ public class TaskList {
         return tasks;
     }
 
+    /**
+     * Removes all tasks from the task list.
+     * This action cannot be undone as it will clear all stored tasks.
+     */
     public void clear() {
         tasks.clear();
     }
