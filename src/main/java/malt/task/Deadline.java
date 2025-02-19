@@ -3,13 +3,10 @@ package malt.task;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
 import malt.MaltException;
 
-
 public class Deadline extends Task {
-    protected LocalDate byDate;
-
+    private final LocalDate byDate;
     private static final DateTimeFormatter INPUT_OUTPUT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy");
 
@@ -28,7 +25,6 @@ public class Deadline extends Task {
         } catch (DateTimeParseException e) {
             throw new MaltException("Invalid date format! Please use yyyy-MM-dd (e.g., 2023-10-15)");
         }
-
     }
 
     @Override
@@ -37,11 +33,6 @@ public class Deadline extends Task {
         return "[D]" + super.toString() + " (by: " + dateStr + ")";
     }
 
-    /**
-     * Returns a string representation of the Deadline task formatted for file storage.
-     *
-     * @return A formatted string for storing the Deadline task in a file.
-     */
     @Override
     public String toFileFormat() {
         String dateStr = (byDate == null) ? "" : byDate.format(INPUT_OUTPUT_FORMAT);

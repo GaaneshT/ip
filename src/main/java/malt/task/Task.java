@@ -17,60 +17,39 @@ public abstract class Task {
         this.isDone = false;
     }
 
-    /**
-     * Marks the task as completed.
-     */
     public void markAsDone() {
         this.isDone = true;
     }
 
-    /**
-     * Marks the task as not completed.
-     */
     public void markAsNotDone() {
         this.isDone = false;
     }
 
-    /**
-     * Retrieves the status icon representing the task's completion state.
-     *
-     * @return "X" if the task is completed, otherwise a blank space.
-     */
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
     }
 
-    /**
-     * Each subclass (Todo, Deadline, Event) must implement this method
-     * to produce a string in the correct format, e.g.,
-     * - T | 1 | read book
-     * - D | 0 | return book | Sunday
-     * - E | 1 | project meeting | Monday 2pm | 4pm
-     */
     public abstract String toFileFormat();
 
+    /**
+     * Returns a string representation of the Event task.
+     *
+     * @return A string in the format: [E][status] description (from: start time to: end time)
+     */
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
     }
 
     /**
-     * Parses a single line from the data file and constructs the
-     * corresponding Task object (Todo, Deadline, or Event).
+     * Parses a single line from the data file and constructs the corresponding Task object.
      *
-     * @param line A string in the format, e.g.:
-     *             "T | 1 | read book"
-     *             "D | 0 | return book | Sunday"
-     *             "E | 1 | project meeting | Monday 2pm | 4pm"
-     * @return a Task object (Todo, Deadline, or Event)
-     * @throws MaltException if the line is corrupted or unrecognized
+     * @param line A string representing a task in file format.
+     * @return A Task object.
+     * @throws MaltException if the line is corrupted or unrecognized.
      */
     public static Task fromFileFormat(String line) throws MaltException {
-        // Example line: "T | 1 | read book"
-        // We split on the " | " delimiter. Using regex: "\\s*\\|\\s*"
-        // means "split on '|' and allow for optional spaces around it."
         String[] parts = line.split("\\s*\\|\\s*");
-
         if (parts.length < 3) {
             throw new MaltException("Corrupted line (not enough parts): " + line);
         }
@@ -82,7 +61,6 @@ public abstract class Task {
         } catch (NumberFormatException e) {
             throw new MaltException("Corrupted line (invalid doneStatus): " + line);
         }
-
         String description = parts[2];
 
         switch (taskType) {
@@ -95,9 +73,7 @@ public abstract class Task {
                 todo.markAsDone();
             }
             return todo;
-
         case "D":
-            // Format: D | 0/1 | <description> | <by>
             if (parts.length != 4) {
                 throw new MaltException("Corrupted Deadline line: " + line);
             }
@@ -107,9 +83,7 @@ public abstract class Task {
                 deadline.markAsDone();
             }
             return deadline;
-
         case "E":
-            // Format: E | 0/1 | <description> | <from> | <to>
             if (parts.length != 5) {
                 throw new MaltException("Corrupted Event line: " + line);
             }
@@ -120,7 +94,6 @@ public abstract class Task {
                 event.markAsDone();
             }
             return event;
-
         default:
             throw new MaltException("Unrecognized task type: " + taskType);
         }
