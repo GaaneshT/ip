@@ -1,16 +1,34 @@
 package malt.parser;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import malt.task.Task;
-import malt.task.Todo;
+import java.util.Map;
+
+import malt.MaltException;
+import malt.storage.Storage;
 import malt.task.Deadline;
 import malt.task.Event;
+import malt.task.Task;
 import malt.task.TaskList;
+import malt.task.Todo;
 import malt.ui.Ui;
-import malt.storage.Storage;
-import malt.MaltException;
 
 public class Parser {
+
+    /**
+     * A map of command aliases to their "real" commands.
+     * E.g., "t" -> "todo", "dl" -> "deadline", etc.
+     */
+    private static final Map<String, String> COMMAND_ALIASES = new HashMap<>();
+
+    static {
+        COMMAND_ALIASES.put("t", "todo");
+        COMMAND_ALIASES.put("dl", "deadline");
+        COMMAND_ALIASES.put("ev", "event");
+        COMMAND_ALIASES.put("b", "bye");
+        COMMAND_ALIASES.put("c", "clear");
+    }
 
     /**
      * Parses the user's input string and executes the corresponding command.
@@ -24,56 +42,89 @@ public class Parser {
      */
     public static boolean parseAndExecute(String input, TaskList tasks, Ui ui, Storage storage)
             throws MaltException {
+
         assert input != null : "Command input should never be null!";
         assert tasks != null : "TaskList should never be null!";
         assert ui != null : "UI should never be null!";
         assert storage != null : "Storage should never be null!";
 
-        String[] parts = input.split(" ", 2);
-        String command = parts[0].toLowerCase();
-        String argument = (parts.length > 1) ? parts[1].trim() : "";
+        // Split the input by whitespace
+        String[] tokens = input.trim().split("\\s+");
+        if (tokens.length == 0) {
+            throw new MaltException("No command provided!");
+        }
+
+        String rawCommand = tokens[0].toLowerCase();
+        String command = COMMAND_ALIASES.getOrDefault(rawCommand, rawCommand);
+
+        String[] argTokens = Arrays.copyOfRange(tokens, 1, tokens.length);
 
         switch (command) {
         case "bye":
             return handleBye(ui);
+
         case "list":
             handleList(tasks, ui);
             break;
+
         case "mark":
-            handleMark(argument, tasks, ui, storage);
+            handleMark(joinArgs(argTokens), tasks, ui, storage);
             break;
+
         case "unmark":
-            handleUnmark(argument, tasks, ui, storage);
+            handleUnmark(joinArgs(argTokens), tasks, ui, storage);
             break;
+
         case "delete":
-            handleDelete(argument, tasks, ui, storage);
+            handleDelete(joinArgs(argTokens), tasks, ui, storage);
             break;
+
         case "todo":
-            handleTodo(argument, tasks, ui, storage);
+            // Minimal approach: no flags needed; just treat everything as description
+            handleTodo(joinArgs(argTokens), tasks, ui, storage);
             break;
+
         case "deadline":
-            handleDeadline(argument, tasks, ui, storage);
+            // Flexible approach with /by anywhere in the input
+            handleDeadlineFlexible(argTokens, tasks, ui, storage);
             break;
+
         case "event":
-            handleEvent(argument, tasks, ui, storage);
+            // Flexible approach with /from and /to anywhere in the input
+            handleEventFlexible(argTokens, tasks, ui, storage);
             break;
+
         case "find":
-            handleFind(argument, tasks, ui);
+            handleFind(joinArgs(argTokens), tasks, ui);
             break;
+
+        case "clear":
+            handleClear(tasks, ui, storage);
+            break;
+
         default:
             throw new MaltException("I'm sorry, but I don't know what that means!");
         }
         return false;
     }
 
-    // ----------------------
-    // COMMAND HANDLERS
-    // ----------------------
+    // ----------------------------------------------------------------------
+    // COMMAND HANDLERS (unchanged from your original, except for flexible ones)
+    // ----------------------------------------------------------------------
 
     private static boolean handleBye(Ui ui) {
         ui.showGoodbye();
         return true;
     }
+
+    private static void handleClear(TaskList tasks, Ui ui, Storage storage) throws MaltException {
+        tasks.clear();
+        storage.saveTasks(tasks.getAllTasks());
+        ui.showLine();
+        System.out.println("All tasks have been cleared!");
+        ui.showLine();
+    }
+
 
     private static void handleList(TaskList tasks, Ui ui) {
         ui.showLine();
@@ -153,20 +204,41 @@ public class Parser {
         ui.showLine();
     }
 
-    private static void handleDeadline(String arg, TaskList tasks, Ui ui, Storage storage)
+    // ----------------------------------------------------------------------
+    // FLEXIBLE SYNTAX HANDLERS
+    // ----------------------------------------------------------------------
+
+    /**
+     * Flexible parsing for 'deadline' command:
+     * Allows /by <date> to appear anywhere in the user input tokens.
+     * e.g. "deadline /by 2023-10-15 return book"
+     *      "deadline return book /by 2023-10-15"
+     */
+    private static void handleDeadlineFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage)
             throws MaltException {
-        String[] parts = arg.split("/by", 2);
-        if (parts.length < 2) {
-            throw new MaltException(
-                    "OOPS!!! Please specify the deadline in the format:\n" +
-                            "   deadline <description> /by <yyyy-MM-dd>");
+        String byDate = "";
+        StringBuilder descriptionBuilder = new StringBuilder();
+
+        for (int i = 0; i < tokens.length; i++) {
+            if (tokens[i].equals("/by")) {
+                // The next token should be the date
+                if (i + 1 < tokens.length) {
+                    byDate = tokens[++i];
+                } else {
+                    throw new MaltException("Please provide a date after /by.");
+                }
+            } else {
+                // Part of the description
+                descriptionBuilder.append(tokens[i]).append(" ");
+            }
         }
-        String description = parts[0].trim();
-        String byInput = parts[1].trim();
-        if (description.isEmpty() || byInput.isEmpty()) {
+
+        String description = descriptionBuilder.toString().trim();
+        if (description.isEmpty() || byDate.isEmpty()) {
             throw new MaltException("OOPS!!! Both description and /by part cannot be empty.");
         }
-        Deadline deadline = new Deadline(description, byInput);
+
+        Deadline deadline = new Deadline(description, byDate);
         tasks.addTask(deadline);
         storage.saveTasks(tasks.getAllTasks());
         printTaskConfirmation(ui, "Adding this task:", deadline);
@@ -174,24 +246,42 @@ public class Parser {
         ui.showLine();
     }
 
-    private static void handleEvent(String arg, TaskList tasks, Ui ui, Storage storage)
+    /**
+     * Flexible parsing for 'event' command:
+     * Allows /from <start> and /to <end> to appear in any order.
+     * e.g. "event project meeting /from Monday 2pm /to 4pm"
+     *      "event /from Monday 2pm /to 4pm project meeting"
+     */
+    private static void handleEventFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage)
             throws MaltException {
-        String[] fromSplit = arg.split("/from", 2);
-        if (fromSplit.length < 2) {
-            throw new MaltException(
-                    "OOPS!!! Please specify the event in the format:\n" +
-                            "   event <description> /from <start> /to <end>");
+        String fromTime = "";
+        String toTime = "";
+        StringBuilder descriptionBuilder = new StringBuilder();
+
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+            if (token.equals("/from")) {
+                if (i + 1 < tokens.length) {
+                    fromTime = tokens[++i];
+                } else {
+                    throw new MaltException("Please provide a start time after /from.");
+                }
+            } else if (token.equals("/to")) {
+                if (i + 1 < tokens.length) {
+                    toTime = tokens[++i];
+                } else {
+                    throw new MaltException("Please provide an end time after /to.");
+                }
+            } else {
+                descriptionBuilder.append(token).append(" ");
+            }
         }
-        String description = fromSplit[0].trim();
-        String[] toSplit = fromSplit[1].split("/to", 2);
-        if (toSplit.length < 2) {
-            throw new MaltException("OOPS!!! An event must have both /from and /to time frames.");
-        }
-        String fromTime = toSplit[0].trim();
-        String toTime = toSplit[1].trim();
+
+        String description = descriptionBuilder.toString().trim();
         if (description.isEmpty() || fromTime.isEmpty() || toTime.isEmpty()) {
             throw new MaltException("OOPS!!! Make sure description, /from, and /to parts are not empty.");
         }
+
         Event event = new Event(description, fromTime, toTime);
         tasks.addTask(event);
         storage.saveTasks(tasks.getAllTasks());
@@ -212,5 +302,15 @@ public class Parser {
         System.out.println(message);
         System.out.println("  " + task);
         ui.showLine();
+    }
+
+    /**
+     * Utility method to join an array of tokens into a single space-separated string.
+     *
+     * @param tokens The tokens to join.
+     * @return A single string containing all tokens separated by spaces.
+     */
+    private static String joinArgs(String[] tokens) {
+        return String.join(" ", tokens).trim();
     }
 }

@@ -100,5 +100,10 @@ public class TaskList {
     public List<Task> getAllTasks() {
         return tasks;
     }
+
+    public void clear() {
+        tasks.clear();
+    }
+
 }
 
