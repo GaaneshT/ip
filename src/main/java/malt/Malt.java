@@ -9,14 +9,19 @@ import javafx.stage.Stage;
 import malt.ui.MainWindow;
 
 public class Malt extends Application {
-    private MaltChatbot maltChatbot = new MaltChatbot(); // New chatbot logic class
+    private final MaltChatbot maltChatbot = new MaltChatbot();
 
+    /**
+     * Starts the JavaFX application by loading the FXML layout and setting up the scene.
+     *
+     * @param stage The primary stage for the application.
+     */
     @Override
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/MainWindow.fxml"));
-            AnchorPane ap = fxmlLoader.load();
-            Scene scene = new Scene(ap);
+            AnchorPane rootLayout = fxmlLoader.load();
+            Scene scene = new Scene(rootLayout);
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setMaltChatbot(maltChatbot);
             stage.setTitle("Malt Chatbot");
@@ -26,6 +31,11 @@ public class Malt extends Application {
         }
     }
 
+    /**
+     * The main entry point of the application. This method launches the JavaFX application.
+     *
+     * @param args Command-line arguments passed to the application.
+     */
     public static void main(String[] args) {
         launch(args);
     }

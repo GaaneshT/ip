@@ -19,15 +19,20 @@ public class Event extends Task {
         this.to = to;
     }
 
+    /**
+     * Returns a string representation of the Event task.
+     *
+     * @return A string in the format: [E][status] description (from: start time to: end time)
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
     }
 
     /**
-     * Converts the event task into a formatted string for file storage.
+     * Returns the file format representation of the Event task.
      *
-     * @return A formatted string representing the event task, in the format "E | status | description | from | to".
+     * @return A formatted string for file storage, containing task type, status, description, start, and end time.
      */
     @Override
     public String toFileFormat() {

@@ -81,7 +81,6 @@ public class TaskList {
         return matchingTasks;
     }
 
-
     /**
      * Returns the number of tasks in the TaskList.
      *
@@ -92,6 +91,7 @@ public class TaskList {
         return tasks.size();
     }
 
+
     /**
      * Returns a list of all tasks.
      *
@@ -101,3 +101,4 @@ public class TaskList {
         return tasks;
     }
 }
+

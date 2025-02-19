@@ -8,11 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-
 import malt.task.Task;
 import malt.MaltException;
-
 
 public class Storage {
     private final String filePath;
@@ -49,10 +46,8 @@ public class Storage {
      */
     public List<Task> loadTasks() {
         List<Task> loadedTasks = new ArrayList<>();
-        assert filePath != null : "File path should not be null!";
-        assert !filePath.isEmpty() : "File path should not be empty!";
+        assert filePath != null && !filePath.isEmpty() : "File path should not be null or empty!";
         File file = new File(filePath);
-
 
         if (!file.exists()) {
             return loadedTasks;

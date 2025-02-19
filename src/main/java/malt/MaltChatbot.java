@@ -2,16 +2,15 @@ package malt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
 import malt.parser.Parser;
 import malt.storage.Storage;
 import malt.task.TaskList;
 import malt.ui.Ui;
 
 public class MaltChatbot {
-    private Ui ui;
-    private Storage storage;
-    private TaskList tasks;
+    private final Ui ui;
+    private final Storage storage;
+    private final TaskList tasks;
 
     public MaltChatbot() {
         ui = new Ui();
@@ -21,7 +20,6 @@ public class MaltChatbot {
         assert ui != null : "UI should be initialized!";
         assert storage != null : "Storage should be initialized!";
         assert tasks != null : "TaskList should be initialized!";
-
     }
 
     /**
@@ -30,23 +28,25 @@ public class MaltChatbot {
      * @param input User input string.
      * @return Malt's response.
      */
-
     public String getResponse(String input) {
-        // Capture System.out output
+        // Capture System.out output to build the response
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
         try {
-            boolean isExit = Parser.parseAndExecute(input, tasks, ui, storage);
+            // Execute the command. The exit flag is not used here.
+            Parser.parseAndExecute(input, tasks, ui, storage);
         } catch (MaltException e) {
+            // Restore original stream before returning error
+            System.setOut(originalOut);
             return "Error: " + e.getMessage();
         } finally {
             System.setOut(originalOut);
         }
+
         String response = outputStream.toString().trim();
-        assert (response != null) && !response.isEmpty() : "Response should not be null or empty!";
+        assert response != null && !response.isEmpty() : "Response should not be null or empty!";
         return response;
     }
-
 }
