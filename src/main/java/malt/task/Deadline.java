@@ -22,11 +22,13 @@ public class Deadline extends Task {
      */
     public Deadline(String description, String byInput) throws MaltException {
         super(description);
+        assert byInput != null && !byInput.isEmpty() : "Deadline date input cannot be null or empty!";
         try {
             this.byDate = LocalDate.parse(byInput.trim(), INPUT_OUTPUT_FORMAT);
         } catch (DateTimeParseException e) {
             throw new MaltException("Invalid date format! Please use yyyy-MM-dd (e.g., 2023-10-15)");
         }
+
     }
 
     @Override

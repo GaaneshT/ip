@@ -17,6 +17,11 @@ public class MaltChatbot {
         ui = new Ui();
         storage = new Storage("data/malt.txt");
         tasks = new TaskList(storage.loadTasks());
+
+        assert ui != null : "UI should be initialized!";
+        assert storage != null : "Storage should be initialized!";
+        assert tasks != null : "TaskList should be initialized!";
+
     }
 
     /**
@@ -39,8 +44,9 @@ public class MaltChatbot {
         } finally {
             System.setOut(originalOut);
         }
-
-        return outputStream.toString().trim();
+        String response = outputStream.toString().trim();
+        assert (response != null) && !response.isEmpty() : "Response should not be null or empty!";
+        return response;
     }
 
 }

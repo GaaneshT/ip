@@ -13,6 +13,8 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) {
         super(description);
+        assert from != null && !from.trim().isEmpty() : "Event 'from' time cannot be null or empty!";
+        assert to != null && !to.trim().isEmpty() : "Event 'to' time cannot be null or empty!";
         this.from = from;
         this.to = to;
     }

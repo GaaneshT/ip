@@ -26,6 +26,10 @@ public class Parser {
      */
     public static boolean parseAndExecute(String input, TaskList tasks, Ui ui, Storage storage) throws MaltException {
         // Split the first word as 'command', the rest as 'arguments'
+        assert input != null : "Command input should never be null!";
+        assert tasks != null : "TaskList should never be null!";
+        assert ui != null : "UI should never be null!";
+        assert storage != null : "Storage should never be null!";
         String[] parts = input.split(" ", 2);
         String command = parts[0].toLowerCase();
         String argument = (parts.length > 1) ? parts[1].trim() : "";

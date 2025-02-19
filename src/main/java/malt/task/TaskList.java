@@ -41,9 +41,10 @@ public class TaskList {
      * @throws MaltException If the index is invalid.
      */
     public Task removeTask(int index) throws MaltException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new MaltException("Invalid index for delete command!");
-        }
+//        if (index < 0 || index >= tasks.size()) {
+//            throw new MaltException("Invalid index for delete command!");
+//        }
+        assert index >= 0 && index < tasks.size() : "Invalid index removal attempt!";
         return tasks.remove(index);
     }
 
@@ -55,9 +56,11 @@ public class TaskList {
      * @throws MaltException If the index is invalid.
      */
     public Task getTask(int index) throws MaltException {
-        if (index < 0 || index >= tasks.size()) {
-            throw new MaltException("Invalid index!");
-        }
+//        if (index < 0 || index >= tasks.size()) {
+//            throw new MaltException("Invalid index!");
+//        }
+        assert index >= 0 && index < tasks.size() : "Invalid index access in TaskList!";
+
         return tasks.get(index);
     }
 
