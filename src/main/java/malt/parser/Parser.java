@@ -247,30 +247,34 @@ public class Parser {
      * "event /from Monday 2pm /to 4pm project meeting"
      */
     private static void handleEventFlexible(String[] tokens, TaskList tasks, Ui ui, Storage storage) throws MaltException {
-        String fromTime = "";
-        String toTime = "";
         StringBuilder descriptionBuilder = new StringBuilder();
+        StringBuilder fromTimeBuilder = new StringBuilder();
+        StringBuilder toTimeBuilder = new StringBuilder();
+
+        boolean readingFrom = false;
+        boolean readingTo = false;
 
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i];
             if (token.equals("/from")) {
-                if (i + 1 < tokens.length) {
-                    fromTime = tokens[++i];
-                } else {
-                    throw new MaltException("Please provide a start time after /from.");
-                }
+                readingFrom = true;
+                readingTo = false;
             } else if (token.equals("/to")) {
-                if (i + 1 < tokens.length) {
-                    toTime = tokens[++i];
-                } else {
-                    throw new MaltException("Please provide an end time after /to.");
-                }
+                readingFrom = false;
+                readingTo = true;
+            } else if (readingFrom) {
+                fromTimeBuilder.append(token).append(" ");
+            } else if (readingTo) {
+                toTimeBuilder.append(token).append(" ");
             } else {
                 descriptionBuilder.append(token).append(" ");
             }
         }
 
         String description = descriptionBuilder.toString().trim();
+        String fromTime = fromTimeBuilder.toString().trim();
+        String toTime = toTimeBuilder.toString().trim();
+
         if (description.isEmpty() || fromTime.isEmpty() || toTime.isEmpty()) {
             throw new MaltException("OOPS!!! Make sure description, /from, and /to parts are not empty.");
         }
@@ -282,6 +286,7 @@ public class Parser {
         System.out.println("Now you have " + tasks.size() + " tasks in the list! Get working :(");
         ui.showLine();
     }
+
 
     /**
      * Prints a confirmation message for a task-related command.
