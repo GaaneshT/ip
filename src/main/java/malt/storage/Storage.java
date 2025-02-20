@@ -22,8 +22,21 @@ public class Storage {
      */
     public Storage(String filePath) {
         this.filePath = filePath;
+        ensureDataFolderExists();
     }
 
+
+    private void ensureDataFolderExists() {
+        File file = new File(filePath);
+        File parentDirectory = file.getParentFile(); // Gets the parent directory of filePath
+
+        if (parentDirectory != null && !parentDirectory.exists()) {
+            boolean isCreated = parentDirectory.mkdirs();
+            if (isCreated) {
+                System.out.println("Created missing directory: " + parentDirectory.getAbsolutePath());
+            }
+        }
+    }
     /**
      * Saves the given list of tasks to the file.
      *
