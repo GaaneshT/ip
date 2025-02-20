@@ -28,6 +28,7 @@ public class Parser {
         COMMAND_ALIASES.put("ev", "event");
         COMMAND_ALIASES.put("b", "bye");
         COMMAND_ALIASES.put("c", "clear");
+        COMMAND_ALIASES.put("l", "list");
     }
 
     /**

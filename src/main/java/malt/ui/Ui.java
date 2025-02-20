@@ -6,7 +6,7 @@ import malt.MaltException;
 
 
 public class Ui {
-    private static final String DIVIDER = "____________________________________________";
+    private static final String DIVIDER = "________________________________________";
     private final Scanner scanner;
 
     public Ui() {
@@ -78,6 +78,15 @@ public class Ui {
         showLine();
         System.out.println(" Bye. Hope to see you again soon!");
         showLine();
+        System.out.flush(); // Ensure message prints before exiting
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000); // Wait for 3 seconds
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            System.exit(0);
+        }).start();
     }
 
     /**

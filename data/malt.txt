@@ -1,4 +1,0 @@
-T | 0 | date
-D | 0 | return book | 2024-06-06
-E | 0 | project meeting 2pm | Monday | 4pm
-E | 0 | project meeting | Monday 2pm | 4pm
