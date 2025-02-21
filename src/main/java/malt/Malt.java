@@ -26,6 +26,7 @@ public class Malt extends Application {
             stage.setScene(scene);
             fxmlLoader.<MainWindow>getController().setMaltChatbot(maltChatbot);
             stage.setTitle("Malt Chatbot");
+            stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
