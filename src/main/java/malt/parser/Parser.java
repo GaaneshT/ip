@@ -109,7 +109,7 @@ public class Parser {
     }
 
     // ----------------------------------------------------------------------
-    // COMMAND HANDLERS (unchanged from your original, except for flexible ones)
+    // COMMAND HANDLERS
     // ----------------------------------------------------------------------
 
     private static boolean handleBye(Ui ui) {

@@ -44,7 +44,7 @@ public class MainWindow {
         String input = userInput.getText().trim();
         if (input.isEmpty()) return;
 
-        String response = maltChatbot.getResponse(input); // Now uses MaltChatbot for responses
+        String response = maltChatbot.getResponse(input);
 
         dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage), DialogBox.getMaltDialog(response, maltImage));
         userInput.clear();

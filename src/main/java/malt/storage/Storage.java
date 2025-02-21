@@ -28,7 +28,7 @@ public class Storage {
 
     private void ensureDataFolderExists() {
         File file = new File(filePath);
-        File parentDirectory = file.getParentFile(); // Gets the parent directory of filePath
+        File parentDirectory = file.getParentFile();
 
         if (parentDirectory != null && !parentDirectory.exists()) {
             boolean isCreated = parentDirectory.mkdirs();

@@ -200,3 +200,8 @@ ________________________________________
    java -jar malt.jar
    ```
 
+
+## Acknowledgements
+
+OpenAI's ChatGPT(model 4o) was used to generate javadocs for the public functions.
+

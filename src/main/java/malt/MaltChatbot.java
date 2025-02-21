@@ -30,13 +30,11 @@ public class MaltChatbot {
      * @return Malt's response.
      */
     public String getResponse(String input) {
-        // Capture System.out output to build the response
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
         try {
-            // Execute the command. The exit flag is not used here.
             Parser.parseAndExecute(input, tasks, ui, storage);
         } catch (MaltException e) {
             // Restore original stream before returning error
